@@ -1,4 +1,5 @@
 from marshmallow import Schema, fields, post_load
+import getip
 
 
 class Device(object):
@@ -13,6 +14,7 @@ class Device(object):
                  url=None,
                  host=None,
                  port=None,
+                 connectable_url=None,
                  error_code=None):
         self.name = name
         self.address = address
@@ -25,13 +27,18 @@ class Device(object):
         self.update_time = timestamp
         self.url = url
         self.error_code = error_code
+        self._connectable_url = connectable_url
 
     def validate_address(self, url_address):
         address = Device.recover_address(url_address)
         return address == self.address
 
+    def get_connectable_host(self):
+        if self.host == '0.0.0.0':
+            return getip.get()
+
     def get_ws_url(self):
-        return 'ws://' + self.host + ':' + str(self.port)
+        return 'ws://' + self.get_connectable_host() + ':' + str(self.port)
 
     @staticmethod
     def strip_address(address):
@@ -74,6 +81,7 @@ class DeviceSchema(Schema):
     host = fields.Str()
     port = fields.Integer()
     error_code = fields.Str()
+    connectable_url = fields.Str()
 
     @post_load
     def build_sensor(self, data):

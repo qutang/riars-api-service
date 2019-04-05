@@ -42,6 +42,7 @@ def run(address):
             p.start()
             time.sleep(2)
             # prepare response json
+            device.connectable_url = device.get_ws_url()
             device.status = state_holder.value
             device_manager.append({
                 'stop_signal': stop_signal,
@@ -65,6 +66,7 @@ def run(address):
             p.start()
             time.sleep(2)
             # prepare response json
+            device.connectable_url = device.get_ws_url()
             device.status = state_holder.value
             device_manager.append({
                 'stop_signal': stop_signal,

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e6d7d6eb70df5a559bf871da00cb43d080f2109056408cff1a04688d4cbf0767"
+            "sha256": "148e23fee67b53f30cd78adc79a6f9cf00f55dd35f2958f38f21e00eeffd11d9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -51,6 +51,13 @@
             ],
             "index": "pypi",
             "version": "==1.0.2"
+        },
+        "getip2": {
+            "hashes": [
+                "sha256:017bc676f329aa9f14a5174f3669498986e2e5b1c19c9b26da04834b110cc161"
+            ],
+            "index": "pypi",
+            "version": "==1.6"
         },
         "idna": {
             "hashes": [
