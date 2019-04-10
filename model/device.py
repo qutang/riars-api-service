@@ -49,8 +49,8 @@ class Device(object):
         return address.replace('-', ':')
 
     @staticmethod
-    def from_json_request(body):
-        schema = DeviceSchema()
+    def from_json_request(body, many=False):
+        schema = DeviceSchema(many=many)
         device = schema.load(body).data
         return device
 
