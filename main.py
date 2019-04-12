@@ -1,6 +1,7 @@
 from app import app
 import device_routes
 import processor_routes
+import subject_routes
 import logging
 import multiprocessing
 import multiprocessing_logging
@@ -23,6 +24,7 @@ def set_app_states(debug=True, logging_level=logging.DEBUG):
     app.config['PROCESS_MANAGER'] = multiprocessing.Manager()
     app.config['DEVICE_MANAGER'] = []
     app.config['PROCESSOR_MANAGER'] = []
+    app.config['SELECTED_SUBJECT'] = None
 
 
 def initialize_processors():

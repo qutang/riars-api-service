@@ -7,6 +7,8 @@ import time
 from padar_realtime.processor_stream import ProcessorStreamManager
 from flask import request, jsonify
 from model.processor import Processor
+import os
+from threading import Thread
 
 
 @app.route('/api/processors', methods=['GET'])
@@ -81,6 +83,16 @@ def stop_p(name):
 
 
 def _run_p(name, processor, processor_manager, process_manager):
+    def _process_stop_monitor():
+        logging.info('Start monitoring processor status')
+        while state_holder.value == 'running':
+            time.sleep(1)
+        processor_state = find_processor_state_by_name(name, processor_manager)
+        processor_state['processor'].status = state_holder.value
+        processor_state['stop_signal'] = None
+        processor_state['state'] = state_holder
+        processor_state['process'] = None
+
     if processor.validate_name(name):
         found = find_processor_state_by_name(name, processor_manager)
         if found is None:
@@ -97,15 +109,26 @@ def _run_p(name, processor, processor_manager, process_manager):
             remove_processor_state_by_name(name, processor_manager)
             state_holder = process_manager.Value(ctypes.c_char_p, 'stopped')
             stop_signal = multiprocessing.Event()
+            if app.config['SELECTED_SUBJECT'] is None:
+                logging_folder = False
+            else:
+                logging_folder = os.path.abspath(
+                    os.path.join('data-logging',
+                                 app.config['SELECTED_SUBJECT'],
+                                 'MasterSynced'))
+                os.makedirs(logging_folder, exist_ok=True)
+                logging.info('Create logging folder: ' + logging_folder)
             logging.info('Start a processor: ' + name)
             p = multiprocessing.Process(
                 target=tasks.run_processor,
-                args=(state_holder, stop_signal, processor))
+                args=(state_holder, stop_signal, processor, logging_folder))
             p.start()
             while state_holder.value != 'running':
                 p.join(2)
                 if not p.is_alive():
                     break
+            # start monitor
+            Thread(target=_process_stop_monitor).start()
             # prepare response json
             processor.connectable_url = processor.get_connectable_url()
             processor.status = state_holder.value
@@ -135,7 +158,6 @@ def _stop_p(name, processor_manager):
         while state.value != 'stopped':
             pass
         processor.status = state.value
-        p.terminate()
         logging.info('Stop a processor: ' + name)
     elif processor_state is not None and processor_state[
             'processor'].status == 'stopped':

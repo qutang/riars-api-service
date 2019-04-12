@@ -15,7 +15,8 @@ class Processor(object):
                  update_rate=None,
                  error_code=None,
                  update_time=None,
-                 status=None):
+                 status=None,
+                 number_of_windows=None):
         self.name = name
         self.url = url
         self.host = host
@@ -27,6 +28,7 @@ class Processor(object):
         self.error_code = error_code
         self.status = status
         self.update_time = update_time
+        self.number_of_windows = number_of_windows
 
     def validate_name(self, url_name):
         return url_name == self.name
@@ -75,6 +77,7 @@ class ProcessorSchema(Schema):
     error_code = fields.Str()
     status = fields.Str()
     update_time = fields.Float()
+    number_of_windows = fields.Integer()
 
     @post_load
     def make_processor(self, data):

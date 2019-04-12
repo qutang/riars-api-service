@@ -20,7 +20,10 @@ PREDEFINED_MODELS = [
 ]
 
 
-def entry(merged, model_files=None):
+def entry(merged,
+          model_files=None,
+          logging_folder=False,
+          number_of_windows=None):
     if model_files is None:
         model_files = PREDEFINED_MODELS
     os.makedirs('outputs', exist_ok=True)
@@ -36,8 +39,12 @@ def entry(merged, model_files=None):
         feature_json, feature_df = _compute_features(chunks)
         prediction_json, prediction_df = _make_predictions(
             feature_df, model_files)
-        _save_features(feature_df, stream_names)
-        _save_predictions(prediction_df, stream_names)
+        if logging_folder == False or count >= number_of_windows:
+            logging.info('skip data logging')
+        else:
+            _save_raw_data(chunks, logging_folder)
+            _save_features(feature_df, stream_names, logging_folder)
+            _save_predictions(prediction_df, stream_names, logging_folder)
         result_json = {**feature_json, **prediction_json}
         result_json['START_TIME'] = st
         result_json['STOP_TIME'] = et
@@ -47,8 +54,38 @@ def entry(merged, model_files=None):
         return json_str
 
 
-def _save_features(feature_df, stream_names):
-    output_file = 'data-logging/' + '-'.join(stream_names) + '.feature.csv'
+def _save_raw_data(chunks, logging_folder):
+    for chunk in chunks:
+        stream_name = chunk.get_stream_name()
+        packages = chunk.get_packages()
+        chunk_index = chunk.get_chunk_index()
+        dfs = [package.to_dataframe() for package in packages]
+        data_df = pd.concat(dfs, axis=0, ignore_index=True)
+        data_df['CHUNK_INDEX'] = chunk_index
+        data_df['HEADER_TIME_STAMP'] = pd.to_datetime(
+            data_df['HEADER_TIME_STAMP'], unit='s')
+        data_df['HEADER_TIME_STAMP_ORIGINAL'] = pd.to_datetime(
+            data_df['HEADER_TIME_STAMP_ORIGINAL'], unit='s')
+        data_df['HEADER_TIME_STAMP_NOLOSS'] = pd.to_datetime(
+            data_df['HEADER_TIME_STAMP_NOLOSS'], unit='s')
+        data_df['HEADER_TIME_STAMP_REAL'] = pd.to_datetime(
+            data_df['HEADER_TIME_STAMP_REAL'], unit='s')
+        output_file = os.path.join(logging_folder, stream_name + '.sensor.csv')
+        if not os.path.exists(output_file):
+            data_df.to_csv(
+                output_file, index=False, float_format='%.3f', mode='w')
+        else:
+            data_df.to_csv(
+                output_file,
+                index=False,
+                float_format='%.3f',
+                mode='a',
+                header=False)
+
+
+def _save_features(feature_df, stream_names, logging_folder):
+    output_file = os.path.join(logging_folder,
+                               '-'.join(stream_names) + '.feature.csv')
     if not os.path.exists(output_file):
         feature_df.to_csv(
             output_file, index=False, float_format='%.3f', mode='w')
@@ -61,8 +98,9 @@ def _save_features(feature_df, stream_names):
             header=False)
 
 
-def _save_predictions(prediction_df, stream_names):
-    output_file = 'data-logging/' + '-'.join(stream_names) + '.prediction.csv'
+def _save_predictions(prediction_df, stream_names, logging_folder):
+    output_file = os.path.join(logging_folder,
+                               '-'.join(stream_names) + '.prediction.csv')
     if not os.path.exists(output_file):
         prediction_df.to_csv(
             output_file, index=False, float_format='%.3f', mode='w')
@@ -82,6 +120,7 @@ def _compute_features(chunks):
         stream_name = chunk.get_stream_name()
         packages = chunk.get_packages()
         dfs = [package.to_dataframe() for package in packages]
+        chunk_index = chunk.get_chunk_index()
         data_df = pd.concat(dfs, axis=0, ignore_index=True)
         clean_df = data_df[['X', 'Y', 'Z']]
         X = clean_df.values
@@ -91,16 +130,20 @@ def _compute_features(chunks):
         df.columns = columns
         df['START_TIME'] = pd.Timestamp.fromtimestamp(chunk.get_chunk_st())
         df['STOP_TIME'] = pd.Timestamp.fromtimestamp(chunk.get_chunk_et())
+        df['CHUNK_INDEX'] = chunk_index
         feature_dfs.append(df)
         feature_json[stream_name.upper() + '_FEATURE'] = json.loads(
             df.to_json(orient='records'))
 
-    feature_df = reduce(lambda x, y: x.merge(y), feature_dfs)
+    feature_df = reduce(
+        lambda x, y: x.merge(y, on=['START_TIME', 'STOP_TIME', 'CHUNK_INDEX']),
+        feature_dfs)
     return feature_json, feature_df
 
 
 def _make_predictions(feature_df, model_files):
-    indexed_feature_df = feature_df.set_index(['START_TIME', 'STOP_TIME'])
+    indexed_feature_df = feature_df.set_index(
+        ['START_TIME', 'STOP_TIME', 'CHUNK_INDEX'])
 
     prediction_json = {}
     prediction_dfs = []
@@ -119,12 +162,17 @@ def _make_predictions(feature_df, model_files):
             except:
                 scores = len(class_labels) * [np.nan]
             for class_label, score in zip(class_labels, scores):
-                p_df[class_label.upper() + '_PREDICTION'] = [score]
+                p_df[name + '_' + class_label.upper() + '_PREDICTION'] = [
+                    score
+                ]
             p_df['START_TIME'] = feature_df['START_TIME']
             p_df['STOP_TIME'] = feature_df['STOP_TIME']
-            print(p_df)
+            p_df['CHUNK_INDEX'] = feature_df['CHUNK_INDEX']
             prediction_dfs.append(p_df)
             prediction_json[name + '_PREDICTION'] = json.loads(
                 p_df.to_json(orient='records'))
-    prediction_df = reduce(lambda x, y: x.merge(y), prediction_dfs)
+    prediction_df = reduce(
+        lambda x, y: x.merge(y, on=['START_TIME', 'STOP_TIME', 'CHUNK_INDEX']),
+        prediction_dfs)
+    print(prediction_df)
     return prediction_json, prediction_df
