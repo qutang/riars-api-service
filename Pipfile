@@ -8,6 +8,7 @@ flask = "*"
 marshmallow = "*"
 padar_realtime = {git = "https://github.com/qutang/padar_realtime.git", editable = true}
 "getip2" = "*"
+flask-cors = "*"
 
 [dev-packages]
 

@@ -1,6 +1,7 @@
 from app import app
 import device_routes
 import processor_routes
+import routes
 import subject_routes
 import logging
 import multiprocessing
