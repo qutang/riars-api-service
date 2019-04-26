@@ -20,7 +20,7 @@ def get_all():
         Device(address=address, status='stopped') for address in addresses
     ]
     response = Device.to_json_responses(*devices, timestamp=time.time())
-    return jsonify(response)
+    return jsonify(response), 200
 
 
 @app.route('/api/sensors', methods=['PUT'])

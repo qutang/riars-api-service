@@ -38,6 +38,7 @@ def create_new_subject():
     subject_df = pd.DataFrame(data=[body])
     # select subject
     app.config['SELECTED_SUBJECT'] = subject.id
+    subject.selected = True
     # create subject data folder
     if os.path.exists(os.path.join('data-logging', subject.id)):
         logging.warning(subject.id + ' data folder exists, skip')
@@ -58,7 +59,8 @@ def create_new_subject():
     else:
         os.makedirs(os.path.dirname(SUBJECT_META), exist_ok=True)
         subject_df.to_csv(SUBJECT_META, index=False, header=True)
-    return jsonify('success'), 200
+    result = subject.to_json_response()
+    return jsonify(result), 200
 
 
 @app.route('/api/subjects', methods=['POST'])
