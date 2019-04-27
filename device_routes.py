@@ -36,12 +36,13 @@ def run_all():
         device = _run(address, device, device_manager, process_manager)
         results.append(device)
     response = Device.to_json_responses(*results, time.time())
-    return jsonify(response)
+    return jsonify(response), 200
 
 
 @app.route('/api/sensors', methods=['DELETE'])
 def stop_all():
     device_manager = app.config['DEVICE_MANAGER']
+    print(request.json)
     devices = Device.from_json_request(request.json, many=True)
     addresses = list(map(lambda d: d.address, devices))
     results = []

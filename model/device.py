@@ -36,6 +36,8 @@ class Device(object):
     def get_connectable_host(self):
         if self.host == '0.0.0.0':
             return getip.get()
+        else:
+            return self.host
 
     def get_ws_url(self):
         return 'ws://' + self.get_connectable_host() + ':' + str(self.port)
