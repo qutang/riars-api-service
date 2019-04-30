@@ -36,6 +36,8 @@ class Processor(object):
     def get_connectable_host(self):
         if self.host == '0.0.0.0':
             return getip.get()
+        else:
+            return self.host
 
     def get_connectable_url(self):
         return 'ws://' + self.get_connectable_host() + ':' + str(self.port)
@@ -61,7 +63,7 @@ class Processor(object):
     def to_json_response(self, timestamp=None):
         if timestamp is not None:
             self.update_time = timestamp
-        schema = processorSchema()
+        schema = ProcessorSchema()
         return schema.dump(self).data
 
 

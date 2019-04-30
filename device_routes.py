@@ -112,6 +112,7 @@ def _run(address, device, device_manager, process_manager):
             logging.info(error_code)
             logging.error(error_code)
             device.error_code = error_code
+            device.status = 'running'
         else:
             remove_device_state_by_address(address, device_manager)
             state_holder = process_manager.Value(ctypes.c_char_p, 'stopped')
