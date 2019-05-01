@@ -38,8 +38,9 @@ def entry(merged,
         feature_json, feature_df = _compute_features(chunks)
         prediction_json, prediction_df = _make_predictions(
             feature_df, model_files)
-        if logging_folder == False or count >= number_of_windows:
-            logging.info('skip data logging')
+        if logging_folder == False or (count >= number_of_windows
+                                       and number_of_windows > 0):
+            print('skip data logging')
         else:
             _save_raw_data(chunks, logging_folder)
             _save_features(feature_df, stream_names, logging_folder)
