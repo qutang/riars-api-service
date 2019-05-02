@@ -3,6 +3,7 @@ import device_routes
 import processor_routes
 import routes
 import subject_routes
+import annotation_routes
 import logging
 import multiprocessing
 import multiprocessing_logging

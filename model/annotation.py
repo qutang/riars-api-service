@@ -1,0 +1,61 @@
+from marshmallow import Schema, fields, post_load
+import pandas as pd
+
+
+class Annotation(object):
+    def __init__(self,
+                 id,
+                 start_time=None,
+                 stop_time=None,
+                 label_name=None,
+                 note=None):
+        self.start_time = start_time
+        self.stop_time = stop_time
+        self.label_name = label_name
+        self.note = note
+        self.id = id
+
+    @staticmethod
+    def from_json_request(body, many=False):
+        print(body)
+        schema = AnnotationSchema(many=many)
+        annotation = schema.load(body).data
+        return annotation
+
+    @staticmethod
+    def to_json_responses(*annotations):
+        schema = AnnotationSchema(many=True)
+        return schema.dump(annotations).data
+
+    def to_json_response(self):
+        schema = AnnotationSchema()
+        return schema.dump(self).data
+
+    def to_df(self):
+        return pd.DataFrame(
+            data={
+                'HEADER_TIME_STAMP': [self.start_time],
+                'START_TIME': [self.start_time],
+                'STOP_TIME': [self.stop_time],
+                'LABEL_NAME': [self.label_name],
+                'NOTE': [self.note]
+            })
+
+    @staticmethod
+    def to_dataframe(annotations):
+        annotation_dfs = list(
+            map(lambda annotation: annotation.to_df(), annotations))
+        annotation_df = pd.concat(annotation_dfs, ignore_index=True)
+        return annotation_df
+
+
+class AnnotationSchema(Schema):
+    id = fields.Str()
+    start_time = fields.Float()
+    stop_time = fields.Float()
+    label_name = fields.Str()
+    note = fields.Str()
+
+    @post_load
+    def build_annotation(self, data):
+        return Annotation(**data)
