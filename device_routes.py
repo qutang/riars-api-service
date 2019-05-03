@@ -11,14 +11,18 @@ from model.device import Device
 
 @app.route('/api/sensors', methods=['GET'])
 def get_all():
+    # get query parameter
+    scan = int(request.args.get('scan'))
     device_manager = app.config['DEVICE_MANAGER']
     devices = list(
         map(lambda device_state: device_state['device'], device_manager))
-    scanner = MetaWearScanner()
-    addresses = scanner.scan()
-    devices += [
-        Device(address=address, status='stopped') for address in addresses
-    ]
+    logging.info(devices)
+    if scan == 1:
+        scanner = MetaWearScanner()
+        addresses = scanner.scan()
+        devices += [
+            Device(address=address, status='stopped') for address in addresses
+        ]
     response = Device.to_json_responses(*devices, timestamp=time.time())
     return jsonify(response), 200
 
