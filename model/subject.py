@@ -2,10 +2,24 @@ from marshmallow import Schema, fields, post_load
 
 
 class Subject(object):
-    def __init__(self, id=None, age=None, gender=None, selected=False):
+    def __init__(self,
+                 id=None,
+                 age=None,
+                 gender=None,
+                 weight=None,
+                 height=None,
+                 dress=None,
+                 shoes=None,
+                 dominant_side=None,
+                 selected=False):
         self.id = id
         self.gender = gender
         self.age = age
+        self.weight = weight
+        self.height = height
+        self.dress = dress
+        self.shoes = shoes
+        self.dominant_side = dominant_side
         self.selected = selected
 
     @staticmethod
@@ -28,6 +42,11 @@ class SubjectSchema(Schema):
     id = fields.Str()
     gender = fields.Str()
     age = fields.Integer()
+    weight = fields.Float()
+    height = fields.Float()
+    dress = fields.Str()
+    shoes = fields.Str()
+    dominant_side = fields.Str()
     selected = fields.Bool()
 
     @post_load
