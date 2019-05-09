@@ -4,7 +4,6 @@ import pandas as pd
 
 class Annotation(object):
     def __init__(self,
-                 id,
                  start_time=None,
                  stop_time=None,
                  label_name=None,
@@ -13,7 +12,6 @@ class Annotation(object):
         self.stop_time = stop_time
         self.label_name = label_name
         self.note = note
-        self.id = id
 
     @staticmethod
     def from_json_request(body, many=False):
@@ -50,7 +48,6 @@ class Annotation(object):
 
 
 class AnnotationSchema(Schema):
-    id = fields.Str()
     start_time = fields.Float()
     stop_time = fields.Float()
     label_name = fields.Str()

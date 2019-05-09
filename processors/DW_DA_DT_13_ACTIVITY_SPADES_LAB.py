@@ -14,7 +14,7 @@ dir_path = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), 'pretrained_models')
 PREDEFINED_MODELS = [
     os.path.join(dir_path, f) for f in [
-        'DW.MO.posture_model.pkl',
+        'DW_DA_DT.MO.thirteen_activities_model.pkl',
     ]
 ]
 

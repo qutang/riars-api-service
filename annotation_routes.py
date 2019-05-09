@@ -9,14 +9,16 @@ import logging
 @app.route('/api/annotations', methods=['PUT'])
 def save_annotations():
     body = request.json
-    annotations = Annotation.from_json_request(body, many=True)
+    annotations = Annotation.from_json_request(body['data'], many=True)
+    id = body['id']
+    data_type = body['type']
     annotation_df = Annotation.to_dataframe(annotations)
-    annotation_df['START_TIME'] = pd.to_datetime(
-        annotation_df['START_TIME'], unit='s')
-    annotation_df['HEADER_TIME_STAMP'] = pd.to_datetime(
-        annotation_df['HEADER_TIME_STAMP'], unit='s')
-    annotation_df['STOP_TIME'] = pd.to_datetime(
-        annotation_df['STOP_TIME'], unit='s')
+    annotation_df['START_TIME'] = annotation_df['START_TIME'].apply(
+        pd.Timestamp.fromtimestamp)
+    annotation_df['HEADER_TIME_STAMP'] = annotation_df[
+        'HEADER_TIME_STAMP'].apply(pd.Timestamp.fromtimestamp)
+    annotation_df['STOP_TIME'] = annotation_df['STOP_TIME'].apply(
+        pd.Timestamp.fromtimestamp)
     # save annotations to file
     if app.config['SELECTED_SUBJECT'] is None:
         logging_folder = False
@@ -26,7 +28,6 @@ def save_annotations():
                          'MasterSynced'))
     os.makedirs(logging_folder, exist_ok=True)
     logging.info('Create logging folder: ' + logging_folder)
-    output_file = os.path.join(logging_folder,
-                               annotations[0].id + '.annotation.csv')
+    output_file = os.path.join(logging_folder, id + '.' + data_type + '.csv')
     annotation_df.to_csv(output_file, index=False)
     return "success", 200

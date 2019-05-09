@@ -62,14 +62,14 @@ def _save_raw_data(chunks, logging_folder):
         dfs = [package.to_dataframe() for package in packages]
         data_df = pd.concat(dfs, axis=0, ignore_index=True)
         data_df['CHUNK_INDEX'] = chunk_index
-        data_df['HEADER_TIME_STAMP'] = pd.to_datetime(
-            data_df['HEADER_TIME_STAMP'], unit='s')
-        data_df['HEADER_TIME_STAMP_ORIGINAL'] = pd.to_datetime(
-            data_df['HEADER_TIME_STAMP_ORIGINAL'], unit='s')
-        data_df['HEADER_TIME_STAMP_NOLOSS'] = pd.to_datetime(
-            data_df['HEADER_TIME_STAMP_NOLOSS'], unit='s')
-        data_df['HEADER_TIME_STAMP_REAL'] = pd.to_datetime(
-            data_df['HEADER_TIME_STAMP_REAL'], unit='s')
+        data_df['HEADER_TIME_STAMP'] = data_df['HEADER_TIME_STAMP'].apply(
+            pd.Timestamp.fromtimestamp)
+        data_df['HEADER_TIME_STAMP_ORIGINAL'] = data_df[
+            'HEADER_TIME_STAMP_ORIGINAL'].apply(pd.Timestamp.fromtimestamp)
+        data_df['HEADER_TIME_STAMP_NOLOSS'] = data_df[
+            'HEADER_TIME_STAMP_NOLOSS'].apply(pd.Timestamp.fromtimestamp)
+        data_df['HEADER_TIME_STAMP_REAL'] = data_df[
+            'HEADER_TIME_STAMP_REAL'].apply(pd.Timestamp.fromtimestamp)
         output_file = os.path.join(logging_folder, stream_name + '.sensor.csv')
         if not os.path.exists(output_file):
             data_df.to_csv(
