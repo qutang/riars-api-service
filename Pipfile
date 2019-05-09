@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+multiprocessing_logging = "*"
 flask = "*"
 marshmallow = "*"
 padar_realtime = {git = "https://github.com/qutang/padar_realtime.git", editable = true}
