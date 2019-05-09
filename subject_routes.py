@@ -16,15 +16,13 @@ def get_all_subjects():
     if os.path.exists(SUBJECT_META):
         subjects_df = pd.read_csv(SUBJECT_META)
         subjects = []
-        for index, row in subjects_df.iterrows():
-            logging.debug(row['id'])
-            logging.debug(app.config['SELECTED_SUBJECT'])
-            subjects.append(
-                Subject(
-                    id=row['id'],
-                    age=row['age'],
-                    gender=row['gender'],
-                    selected=app.config['SELECTED_SUBJECT'] == row['id']))
+        subjects_json = subjects_df.to_dict('records')
+        for subject_json in subjects_json:
+            logging.debug(subject_json)
+            new_subject = Subject.from_json_request(subject_json)
+            if app.config['SELECTED_SUBJECT'] == subject_json['id']:
+                new_subject.selected = True
+            subjects.append(new_subject)
         result = Subject.to_json_responses(*subjects)
     else:
         result = []
@@ -35,6 +33,8 @@ def get_all_subjects():
 def create_new_subject():
     body = request.json
     subject = Subject.from_json_request(body, many=False)
+    logging.debug(body)
+    logging.debug(subject)
     subject_df = pd.DataFrame(data=[body])
     # select subject
     app.config['SELECTED_SUBJECT'] = subject.id
@@ -66,7 +66,9 @@ def create_new_subject():
 @app.route('/api/subjects', methods=['POST'])
 def select_subject():
     body = request.json
+    logging.debug(body)
     subject = Subject.from_json_request(body)
+    logging.debug(subject.id)
     # check if subject exists
     if os.path.exists(os.path.join('data-logging', subject.id)):
         app.config['SELECTED_SUBJECT'] = subject.id
