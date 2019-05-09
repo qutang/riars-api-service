@@ -8,6 +8,7 @@ multiprocessing_logging = "*"
 flask = "*"
 marshmallow = "*"
 padar_realtime = {git = "https://github.com/qutang/padar_realtime.git", editable = true}
+padar_features = {git = "https://github.com/qutang/padar_features.git", editable = true}
 "getip2" = "*"
 flask-cors = "*"
 warble = "==1.2.0"
