@@ -12,6 +12,7 @@ padar_features = {git = "https://github.com/qutang/padar_features.git", editable
 "getip2" = "*"
 flask-cors = "*"
 warble = "==1.2.0"
+sklearn = "*"
 
 [dev-packages]
 
