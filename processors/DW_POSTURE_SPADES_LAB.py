@@ -9,6 +9,7 @@ import json
 import pickle
 import numpy as np
 import logging
+from glob import glob
 
 dir_path = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), 'pretrained_models')
@@ -70,11 +71,17 @@ def _save_raw_data(chunks, logging_folder):
             'HEADER_TIME_STAMP_NOLOSS'].apply(pd.Timestamp.fromtimestamp)
         data_df['HEADER_TIME_STAMP_REAL'] = data_df[
             'HEADER_TIME_STAMP_REAL'].apply(pd.Timestamp.fromtimestamp)
-        output_file = os.path.join(logging_folder, stream_name + '.sensor.csv')
-        if not os.path.exists(output_file):
+        timestamp = data_df['HEADER_TIME_STAMP'][0]
+        timestamp = timestamp.strftime('%Y-%m-%d-%H-%M-%S-%f')
+        timestamp = timestamp[:-3] + "-P0000"
+        if chunk_index == 0:
+            output_file = os.path.join(
+                logging_folder, stream_name + '.' + timestamp + '.sensor.csv')
             data_df.to_csv(
                 output_file, index=False, float_format='%.3f', mode='w')
         else:
+            output_file = glob(
+                os.path.join(logging_folder, stream_name + '.*.sensor.csv'))[0]
             data_df.to_csv(
                 output_file,
                 index=False,
@@ -84,12 +91,21 @@ def _save_raw_data(chunks, logging_folder):
 
 
 def _save_features(feature_df, stream_names, logging_folder):
-    output_file = os.path.join(logging_folder,
-                               '-'.join(stream_names) + '.feature.csv')
-    if not os.path.exists(output_file):
+    timestamp = feature_df['START_TIME'][0]
+    timestamp = timestamp.strftime('%Y-%m-%d-%H-%M-%S-%f')
+    timestamp = timestamp[:-3] + "-P0000"
+
+    chunk_index = feature_df['CHUNK_INDEX'][0]
+    if chunk_index == 0:
+        output_file = os.path.join(
+            logging_folder,
+            '-'.join(stream_names) + '.' + timestamp + '.feature.csv')
         feature_df.to_csv(
             output_file, index=False, float_format='%.3f', mode='w')
     else:
+        output_file = glob(
+            os.path.join(logging_folder,
+                         '-'.join(stream_names) + '.*.feature.csv'))[0]
         feature_df.to_csv(
             output_file,
             index=False,
@@ -99,12 +115,20 @@ def _save_features(feature_df, stream_names, logging_folder):
 
 
 def _save_predictions(prediction_df, stream_names, logging_folder):
-    output_file = os.path.join(logging_folder,
-                               '-'.join(stream_names) + '.prediction.csv')
-    if not os.path.exists(output_file):
+    chunk_index = prediction_df['CHUNK_INDEX'][0]
+    timestamp = prediction_df['START_TIME'][0]
+    timestamp = timestamp.strftime('%Y-%m-%d-%H-%M-%S-%f')
+    timestamp = timestamp[:-3] + "-P0000"
+    if chunk_index == 0:
+        output_file = os.path.join(
+            logging_folder,
+            '-'.join(stream_names) + '.' + timestamp + '.prediction.csv')
         prediction_df.to_csv(
             output_file, index=False, float_format='%.3f', mode='w')
     else:
+        output_file = glob(
+            os.path.join(logging_folder,
+                         '-'.join(stream_names) + '.*.prediction.csv'))[0]
         prediction_df.to_csv(
             output_file,
             index=False,
