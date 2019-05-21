@@ -8,18 +8,24 @@ class Subject(object):
                  gender=None,
                  weight=None,
                  height=None,
+                 blood_pressure=None,
+                 heart_rate=None,
                  dress=None,
                  shoes=None,
-                 dominant_side=None,
+                 dominant_hand=None,
+                 dominant_foot=None,
                  selected=False):
         self.id = id
         self.gender = gender
         self.age = age
         self.weight = weight
         self.height = height
+        self.blood_pressure = blood_pressure
+        self.heart_rate = heart_rate
         self.dress = dress
         self.shoes = shoes
-        self.dominant_side = dominant_side
+        self.dominant_hand = dominant_hand
+        self.dominant_foot = dominant_foot
         self.selected = selected
 
     @staticmethod
@@ -44,9 +50,12 @@ class SubjectSchema(Schema):
     age = fields.Integer()
     weight = fields.Float()
     height = fields.Float()
+    blood_pressure = fields.Str()
+    heart_rate = fields.Float()
     dress = fields.Str()
     shoes = fields.Str()
-    dominant_side = fields.Str()
+    dominant_hand = fields.Str()
+    dominant_foot = fields.Str()
     selected = fields.Bool()
 
     @post_load
