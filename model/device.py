@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields, post_load
 import getip
+import pandas as pd
 
 
 class Device(object):
@@ -63,6 +64,15 @@ class Device(object):
                 device.update_time = timestamp
         schema = DeviceSchema(many=True)
         return schema.dump(devices).data
+
+    @staticmethod
+    def to_location_mapping_csv(*devices, pid):
+        records = map(lambda device: {
+            "PID": pid,
+            "SENSOR_ID": device.address,
+            "SENSOR_PLACEMENT": device.name
+        }, devices)
+        return pd.DataFrame.from_records(data=records)
 
     def to_json_response(self, timestamp=None):
         if timestamp is not None:

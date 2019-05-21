@@ -7,6 +7,7 @@ import time
 from padar_realtime.metawear_stream import MetaWearStream, MetaWearScanner
 from flask import request, jsonify
 from model.device import Device
+import os
 
 
 @app.route('/api/sensors', methods=['GET'])
@@ -39,6 +40,20 @@ def run_all():
         address = device.address
         device = _run(address, device, device_manager, process_manager)
         results.append(device)
+    # save location mapping information
+    location_mapping_df = Device.to_location_mapping_csv(*devices, pid=app.config['SELECTED_SUBJECT'])
+    if app.config['SELECTED_SUBJECT'] is None:
+        logging_folder = False
+    else:
+        logging_folder = os.path.abspath(os.path.join('data-logging', 'DerivedCrossParticipants'))
+    os.makedirs(logging_folder, exist_ok=True)
+    logging.info('Create logging folder: ' + logging_folder)
+    output_file = os.path.join(logging_folder,'location_mapping.csv')
+    if os.path.exists(output_file):
+        location_mapping_df.to_csv(output_file, header=False, index=False, mode='a')
+    else:
+        location_mapping_df.to_csv(output_file, header=True, index=False)
+    logging.info('Saved location mapping information')
     response = Device.to_json_responses(*results, time.time())
     return jsonify(response), 200
 
