@@ -17,8 +17,7 @@ def set_app_states(debug=True, logging_level=logging.DEBUG):
 
     logging.basicConfig(
         level=logging_level,
-        format=
-        '[%(levelname)s]{%(processName)s-%(process)d}(%(threadName)s-%(thread)d)%(message)s',
+        format='[%(levelname)s]{%(processName)s-%(process)d}(%(threadName)s-%(thread)d)%(message)s',
     )
 
     multiprocessing_logging.install_mp_handler()
@@ -30,12 +29,8 @@ def set_app_states(debug=True, logging_level=logging.DEBUG):
 
 
 def initialize_processors():
-    candidates = os.listdir('processors')
-    processor_names = list(
-        map(
-            lambda c: c.replace('.py', ''),
-            filter(lambda c: 'model' not in c and 'pycache' not in c,
-                   candidates)))
+    candidates = os.listdir(os.path.join('processors', 'pretrained_models'))
+    processor_names = list(map(lambda c: c.replace('.pkl', ''), candidates))
     logging.info('Found processors: ' + ','.join(processor_names))
     for name in processor_names:
         app.config['PROCESSOR_MANAGER'].append({

@@ -71,12 +71,13 @@ def run_processor(state_holder, stop_signal, p, logging_folder):
     for input_url in input_urls:
         host, port = p.get_parsed_url(input_url)
         processor.add_input_stream(host=host, port=port)
-    pipeline = importlib.import_module('processors.' + p.name)
+    pipeline = importlib.import_module('processors.muss')
     processor.add_processor_stream(
         pipeline_func=pipeline.entry,
         host=p.host,
         port=p.port,
         ws_server=True,
+        model_name=p.name,
         logging_folder=logging_folder,
         number_of_windows=number_of_windows)
     try:
