@@ -3,7 +3,7 @@ import multiprocessing
 from flask_cors import CORS
 
 app = flask.Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app)
 
 
 def find_device_state_by_address(address, device_manager):

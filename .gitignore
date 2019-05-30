@@ -1,3 +1,5 @@
 __pycache__
 .metawear
 .vscode
+data-logging
+.pytest_cache
