@@ -7,10 +7,12 @@ class Annotation(object):
                  start_time=None,
                  stop_time=None,
                  label_name=None,
+                 category=None,
                  note=None):
         self.start_time = start_time
         self.stop_time = stop_time
         self.label_name = label_name
+        self.category = category
         self.note = note
 
     @staticmethod
@@ -30,13 +32,14 @@ class Annotation(object):
         return schema.dump(self).data
 
     def to_df(self):
+
         return pd.DataFrame(
             data={
                 'HEADER_TIME_STAMP': [self.start_time],
                 'START_TIME': [self.start_time],
                 'STOP_TIME': [self.stop_time],
                 'LABEL_NAME': [self.label_name],
-                'NOTE': [self.note]
+                'NOTE': [str(self.category) + '_' + str(self.note)]
             })
 
     @staticmethod
@@ -51,6 +54,7 @@ class AnnotationSchema(Schema):
     start_time = fields.Float()
     stop_time = fields.Float()
     label_name = fields.Str()
+    category = fields.Str()
     note = fields.Str()
 
     @post_load
