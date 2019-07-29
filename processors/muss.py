@@ -14,11 +14,6 @@ from glob import glob
 
 dir_path = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), 'pretrained_models')
-PREDEFINED_MODELS = [
-    os.path.join(dir_path, f) for f in [
-        'DW_DA_DT.MO.thirteen_activities_model.pkl',
-    ]
-]
 
 
 def get_model_filepath(model_name):
@@ -173,33 +168,10 @@ def _compute_features(chunks):
 
 
 def get_train_target(target):
-    if target == 'ACTIVITY' or target == 'POSTURE':
+    if target == 'MUSS_22_ACTIVITIES' or target == 'MUSS_3_POSTURES' or target == 'MDCAS' or target == 'RIAR_17_ACTIVITIES':
         return target
     else:
-        return 'ACTIVITY'
-
-
-def group_predictions(predicted_probas, class_labels, target, class_mapping):
-    train_target = get_train_target(target)
-    result = dict()
-
-    def map_class_label(label):
-        result = class_mapping.loc[class_mapping[train_target]
-                                   == label, target].values[0]
-        return result
-
-    def add_to_mapped_class(prob, mapped_class, mapped_dict):
-        key_name = target + '_' + mapped_class.upper() + '_PREDICTION'
-        if key_name in mapped_dict:
-            mapped_dict[key_name] += prob
-        else:
-            mapped_dict[key_name] = prob
-        return mapped_dict
-
-    for class_label, prob in zip(class_labels, predicted_probas):
-        mapped_class = map_class_label(class_label)
-        result = add_to_mapped_class(prob, mapped_class, result)
-    return result
+        return 'MUSS_22_ACTIVITIES'
 
 
 def _make_predictions(feature_df, model_file):
@@ -221,16 +193,10 @@ def _make_predictions(feature_df, model_file):
             scores = model_bundle['model'].predict_proba(scaled_X)[0]
         except:
             scores = len(class_labels) * [np.nan]
-        grouped_prediction_dict = group_predictions(scores, class_labels, name,
-                                                    model_bundle['class_mapping'])
-        for key, score in grouped_prediction_dict.items():
-            p_df[key] = [
+        for class_label, score in zip(class_labels, scores):
+            p_df[name + '_' + class_label.upper() + '_PREDICTION'] = [
                 score
             ]
-        # for class_label, score in zip(class_labels, scores):
-        #     p_df[name + '_' + class_label.upper() + '_PREDICTION'] = [
-        #         score
-        #     ]
         p_df['START_TIME'] = feature_df['START_TIME']
         p_df['STOP_TIME'] = feature_df['STOP_TIME']
         p_df['CHUNK_INDEX'] = feature_df['CHUNK_INDEX']
