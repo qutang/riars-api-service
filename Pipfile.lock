@@ -83,11 +83,11 @@
         },
         "flask": {
             "hashes": [
-                "sha256:2271c0070dbcb5275fad4a82e29f23ab92682dc45f9dfbc22c02ba9b9322ce48",
-                "sha256:a080b744b7e345ccfcbc77954861cb05b3c63786e93f2b3875e0913d44b43f05"
+                "sha256:13f9f196f330c7c2c5d7a5cf91af894110ca0215ac051b5844701f2bfd934d52",
+                "sha256:45eb5a6fd193d6cf7e0cf5d8a5b31f83d5faae0293695626f539a823e93b13f6"
             ],
             "index": "pypi",
-            "version": "==1.0.2"
+            "version": "==1.1.1"
         },
         "flask-cors": {
             "hashes": [
@@ -108,6 +108,12 @@
                 "sha256:97697a46e8bf8be34461c2520d6fc4bfca0ed749b22bb2b7c21939fd450a7d63"
             ],
             "version": "==0.4.4"
+        },
+        "fsspec": {
+            "hashes": [
+                "sha256:9f67a25d6b568d75a36d5a4eab5a551780eabc2fbad74bb6ce67af185a00fd4e"
+            ],
+            "version": "==0.4.3"
         },
         "getip2": {
             "hashes": [
