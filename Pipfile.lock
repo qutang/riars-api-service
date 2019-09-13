@@ -115,6 +115,12 @@
             ],
             "version": "==0.4.3"
         },
+        "fsspec": {
+            "hashes": [
+                "sha256:9f67a25d6b568d75a36d5a4eab5a551780eabc2fbad74bb6ce67af185a00fd4e"
+            ],
+            "version": "==0.4.3"
+        },
         "getip2": {
             "hashes": [
                 "sha256:017bc676f329aa9f14a5174f3669498986e2e5b1c19c9b26da04834b110cc161"
@@ -240,10 +246,10 @@
         },
         "multiprocessing-logging": {
             "hashes": [
-                "sha256:bbc437ab7a3803487267b13ccb7bc109633e85d2b509ea07e957f41065f4c908"
+                "sha256:76790aebe751a40c8bb63175e204db73b7a78b3d4e0b73a96b6d02a11b2630f5"
             ],
             "index": "pypi",
-            "version": "==0.2.6"
+            "version": "==0.3.0"
         },
         "numpy": {
             "hashes": [
