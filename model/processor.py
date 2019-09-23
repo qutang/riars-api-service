@@ -34,8 +34,8 @@ class Processor(object):
         return url_name == self.name
 
     def get_connectable_host(self):
-        if self.host == '0.0.0.0':
-            return getip.get()
+        if self.host == '0.0.0.0' or self.host == 'localhost':
+            return "127.0.0.1"
         else:
             return self.host
 
@@ -44,12 +44,16 @@ class Processor(object):
 
     def get_parsed_url(self, url):
         parsed = urllib.parse.urlparse(url)
-        return parsed.hostname, parsed.port
+        if parsed.hostname == "localhost" or parsed.hostname == "0.0.0.0":
+            host = "127.0.0.1"
+        else:
+            host = parsed.hostname
+        return host, parsed.port
 
     @staticmethod
     def from_json_request(body, many=False):
         schema = ProcessorSchema(many=many)
-        processor = schema.load(body).data
+        processor = schema.load(body)
         return processor
 
     @staticmethod
@@ -58,13 +62,13 @@ class Processor(object):
             for processor in processors:
                 processor.update_time = timestamp
         schema = ProcessorSchema(many=True)
-        return schema.dump(processors).data
+        return schema.dump(processors)
 
     def to_json_response(self, timestamp=None):
         if timestamp is not None:
             self.update_time = timestamp
         schema = ProcessorSchema()
-        return schema.dump(self).data
+        return schema.dump(self)
 
 
 class ProcessorSchema(Schema):
@@ -82,5 +86,5 @@ class ProcessorSchema(Schema):
     number_of_windows = fields.Integer()
 
     @post_load
-    def make_processor(self, data):
+    def make_processor(self, data, **kwargs):
         return Processor(**data)

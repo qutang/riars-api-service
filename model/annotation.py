@@ -19,17 +19,17 @@ class Annotation(object):
     def from_json_request(body, many=False):
         print(body)
         schema = AnnotationSchema(many=many)
-        annotation = schema.load(body).data
+        annotation = schema.load(body)
         return annotation
 
     @staticmethod
     def to_json_responses(*annotations):
         schema = AnnotationSchema(many=True)
-        return schema.dump(annotations).data
+        return schema.dump(annotations)
 
     def to_json_response(self):
         schema = AnnotationSchema()
-        return schema.dump(self).data
+        return schema.dump(self)
 
     def to_df(self):
 
@@ -58,5 +58,5 @@ class AnnotationSchema(Schema):
     note = fields.Str()
 
     @post_load
-    def build_annotation(self, data):
+    def build_annotation(self, data, **kwargs):
         return Annotation(**data)

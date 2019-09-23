@@ -54,7 +54,7 @@ class Device(object):
     @staticmethod
     def from_json_request(body, many=False):
         schema = DeviceSchema(many=many)
-        device = schema.load(body).data
+        device = schema.load(body)
         return device
 
     @staticmethod
@@ -63,7 +63,7 @@ class Device(object):
             for device in devices:
                 device.update_time = timestamp
         schema = DeviceSchema(many=True)
-        return schema.dump(devices).data
+        return schema.dump(devices)
 
     @staticmethod
     def to_location_mapping_csv(*devices, pid):
@@ -78,7 +78,7 @@ class Device(object):
         if timestamp is not None:
             self.update_time = timestamp
         schema = DeviceSchema()
-        return schema.dump(self).data
+        return schema.dump(self)
 
 
 class DeviceSchema(Schema):
@@ -96,5 +96,5 @@ class DeviceSchema(Schema):
     connectable_url = fields.Str()
 
     @post_load
-    def build_sensor(self, data):
+    def build_sensor(self, data, **kwargs):
         return Device(**data)

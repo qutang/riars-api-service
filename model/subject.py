@@ -31,17 +31,17 @@ class Subject(object):
     @staticmethod
     def from_json_request(body, many=False):
         schema = SubjectSchema(many=many)
-        subject = schema.load(body).data
+        subject = schema.load(body)
         return subject
 
     @staticmethod
     def to_json_responses(*subjects):
         schema = SubjectSchema(many=True)
-        return schema.dump(subjects).data
+        return schema.dump(subjects)
 
     def to_json_response(self):
         schema = SubjectSchema()
-        return schema.dump(self).data
+        return schema.dump(self)
 
 
 class SubjectSchema(Schema):
@@ -59,5 +59,6 @@ class SubjectSchema(Schema):
     selected = fields.Bool()
 
     @post_load
-    def build_subject(self, data):
+    def build_subject(self, data, **kwargs):
+        print('called')
         return Subject(**data)
