@@ -7,13 +7,8 @@ name = "pypi"
 multiprocessing_logging = "*"
 flask = "*"
 marshmallow = "*"
-padar_realtime = {git = "https://github.com/qutang/padar_realtime.git", referer = "master"}
-padar_features = {git = "https://github.com/qutang/padar_features.git", referer = "master"}
+padar_realtime = {git = "https://github.com/qutang/padar_realtime.git", ref = "master"}
+padar_features = {git = "https://github.com/qutang/padar_features.git", ref = "master"}
 "getip2" = "*"
 flask-cors = "*"
 sklearn = "*"
-
-[dev-packages]
-
-[requires]
-python_version = "3.6"

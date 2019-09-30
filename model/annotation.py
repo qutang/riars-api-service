@@ -8,11 +8,13 @@ class Annotation(object):
                  stop_time=None,
                  label_name=None,
                  category=None,
+                 is_mutual_exclusive=None,
                  note=None):
         self.start_time = start_time
         self.stop_time = stop_time
         self.label_name = label_name
         self.category = category
+        self.is_mutual_exclusive = is_mutual_exclusive
         self.note = note
 
     @staticmethod
@@ -55,6 +57,7 @@ class AnnotationSchema(Schema):
     stop_time = fields.Float()
     label_name = fields.Str()
     category = fields.Str()
+    is_mutual_exclusive = fields.Boolean()
     note = fields.Str()
 
     @post_load
