@@ -136,11 +136,11 @@
         },
         "padar-features": {
             "git": "https://github.com/qutang/padar_features.git",
-            "ref": "b1535da518b51a838e8b35025096b14ba13a33cd"
+            "ref": "master"
         },
         "padar-realtime": {
             "git": "https://github.com/qutang/padar_realtime.git",
-            "ref": "69178fb90fa6f9bfe8e3b536a07db8b9c921157b"
+            "ref": "master"
         },
         "scikit-learn": {
             "hashes": [
