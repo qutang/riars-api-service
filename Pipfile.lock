@@ -1,12 +1,10 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f8a6c1dcb039d77051c8c47f5d0658419c3a1f7e3f7b6e13c65d30f91c64306c"
+            "sha256": "a856caf1de24429f7e2ea15ced918cb804dd83b5fb748a8cb0c7db5b985b4e31"
         },
         "pipfile-spec": 6,
-        "requires": {
-            "python_version": "3.6"
-        },
+        "requires": {},
         "sources": [
             {
                 "name": "pypi",
@@ -138,11 +136,11 @@
         },
         "padar-features": {
             "git": "https://github.com/qutang/padar_features.git",
-            "referer": "master"
+            "ref": "b1535da518b51a838e8b35025096b14ba13a33cd"
         },
         "padar-realtime": {
             "git": "https://github.com/qutang/padar_realtime.git",
-            "referer": "master"
+            "ref": "69178fb90fa6f9bfe8e3b536a07db8b9c921157b"
         },
         "scikit-learn": {
             "hashes": [
